@@ -1,5 +1,3 @@
-# This script requires aiohttp Python library to function.
-
 import asyncio
 import aiohttp
 import json
@@ -7,11 +5,9 @@ import logging
 import argparse
 from urllib.parse import urlparse, urlunparse
 
-# Default values
 DEFAULT_CONCURRENCY = 4
 DEFAULT_OLLAMA_URL = 'https://localhost:11434'
 
-# Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 async def websocket_client(url: str, ollama_url: str) -> None:
@@ -64,7 +60,7 @@ async def main(concurrency: int, ollama_url: str) -> None:
             await asyncio.gather(*tasks)
         except Exception as e:
             logging.error(f"Connection error: {e}")
-            await asyncio.sleep(1)  # Wait before retrying
+            await asyncio.sleep(1)
 
 def validate_url(url: str) -> bool:
     parsed = urlparse(url)
