@@ -1,62 +1,86 @@
-# Project Title
+# Ollama Crowd-Funded Server
 
-## Overview
-This project is a web application consisting of a server and client, along with documentation and test files. The application is designed to demonstrate basic web functionalities and interactions.
+Welcome to the **Ollama Crowd-Funded Server**! This server allows you to communicate with Ollama models using official JavaScript or Python clients. The servers are generously provided by individuals who contribute their resources.
 
-## Project Structure
+## Table of Contents
 
+- [Using the Ollama Server](#using-the-ollama-server)
+- [WebSocket Client](#websocket-client)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Using the Ollama Server
+
+To use the Ollama server, simply utilize the original client with the provided URL. Below is an example of how to use the Ollama client in Python:
+
+```python
+from ollama import Client
+
+client = Client(
+    host="https://ollama.molodetz.nl"
+)
+
+messages = []
+
+def chat(message):
+    if message:
+        messages.append({'role': 'user', 'content': message})
+    content = ''
+    for response in client.chat(model='qwen2.5-coder:0.5b', messages=messages, stream=True):
+        content += response.message.content
+        print(response.message.content, end='', flush=True)
+    messages.append({'role': 'assistant', 'content': content})
+    print("")
+
+while True:
+    message = input("You: ")
+    chat(message)
 ```
-├── server.py          # Main server application
-├── client.py          # Client application for interacting with the server
-├── test.py            # Test scripts for the application
-├── index.html         # Main HTML page for the web application
-├── documentation.html  # Documentation for the project
-└── Makefile           # Build instructions
-```
 
-## Installation
-To set up the project, clone the repository and install the necessary dependencies:
+## WebSocket Client
+
+The `client.py` script is an asynchronous WebSocket client for the Ollama API. It connects to the Ollama server, fetches available models, and listens for messages.
+
+### Features
+
+- Asynchronous WebSocket connections using `aiohttp`.
+- Fetches available models from the Ollama API.
+- Logs received data and errors.
+- Supports concurrent WebSocket connections.
+
+### Installation
+
+To run the WebSocket client, ensure you have Python 3.7 or higher installed. You can install the required dependencies using pip:
 
 ```bash
-# Clone the repository
-$ git clone <repository-url>
-
-# Navigate into the project directory
-$ cd <project-directory>
-
-# Install dependencies (if any)
-$ pip install -r requirements.txt
+pip install aiohttp
 ```
 
-## Usage
-To run the server, execute the following command:
+### Usage
+
+You can run the WebSocket client with the following command:
 
 ```bash
-$ python server.py
+python client.py --concurrency <number_of_connections> --ollama_url <ollama_api_url>
 ```
 
-To run the client, execute:
+- `--concurrency`: Number of concurrent WebSocket connections (default: 4).
+- `--ollama_url`: Ollama API URL (default: `https://localhost:11434`).
+
+### Example
+
+To run the client with the default settings:
 
 ```bash
-$ python client.py
+python client.py
 ```
-
-## Testing
-To run the tests, use:
-
-```bash
-$ python test.py
-```
-
-## Documentation
-For detailed information about the project, refer to the `documentation.html` file.
 
 ## Contributing
-Contributions are welcome! Please submit a pull request or open an issue for any suggestions or improvements.
+
+Contributions are welcome! If you would like to contribute to the project, please fork the repository and submit a pull request.
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Acknowledgments
-- [Your Name] - for the initial project setup and design.
-- Any other contributors or resources that helped in the development of this project.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
