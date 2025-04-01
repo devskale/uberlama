@@ -6,7 +6,7 @@ import argparse
 from urllib.parse import urlparse, urlunparse
 
 DEFAULT_CONCURRENCY = 4
-DEFAULT_OLLAMA_URL = 'https://localhost:11434'
+DEFAULT_OLLAMA_URL = 'http://localhost:11434'
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
