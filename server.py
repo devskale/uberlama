@@ -38,6 +38,9 @@ class OllamaServer:
             elif msg.type == web.WSMsgType.ERROR:
                 break
 
+class NoServerFoundException(BaseException):
+    pass 
+
 class ServerManager:
     def __init__(self):
         self.servers = []
@@ -48,14 +51,33 @@ class ServerManager:
     def remove_server(self, server):
         self.servers.remove(server)
 
+    def get_server_by_model_name(self, model_name):
+        for server in self.servers:
+            if model_name in server.model_names:
+                return server
+        return None
+
     async def forward_to_websocket(self, request_id, message, path):
         try:
             server = self.servers.pop(0)
             self.servers.append(server)
+            server = self.get_server_by_model_name(message['model'])
+            if not server:
+                raise NoServerFoundException
             async for msg in server.forward_to_websocket(request_id, message, path):
                 yield msg
         except:
             raise
+
+    def get_models(self):
+        models = {}
+        for server in self.servers:
+            for model_name in server.model_names:
+                if not model_name in models:
+                    models[model_name] = 0
+                models[model_name] += 1
+        return models
+
 
 server_manager = ServerManager()
 
@@ -89,8 +111,11 @@ async def http_handler(request):
     resp = web.StreamResponse(headers={'Content-Type': 'application/x-ndjson', 'Transfer-Encoding': 'chunked'})
     await resp.prepare(request)
     import json
-    async for result in server_manager.forward_to_websocket(request_id, data, path=request.path):
-        await resp.write(json.dumps(result).encode() + b'\n')
+    try:
+        async for result in server_manager.forward_to_websocket(request_id, data, path=request.path):
+            await resp.write(json.dumps(result).encode() + b'\n')
+    except NoServerFoundException:
+        await resp.write(json.dumps(dict(error="No server with that model found.",available=server_manager.get_models())).encode() + b'\n')
     await resp.write_eof()
     return resp
 
@@ -100,11 +125,15 @@ async def index_handler(request):
     index_template = index_template.replace("#client.py", client_py)
     return web.Response(text=index_template, content_type="text/html")
 
+async def models_handler(self):
+    return web.json_response(server_manager.get_models())
+
 app = web.Application()
 
 app.router.add_get("/", index_handler)
 app.router.add_route('GET', '/publish', websocket_handler)
 app.router.add_route('POST', '/api/chat', http_handler)
+app.router.add_route('GET', '/models', models_handler)
 
 if __name__ == '__main__':
     web.run_app(app, port=1984)

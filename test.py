@@ -1,6 +1,6 @@
 from ollama import Client
 client = Client(
-  host='http://localhost:8080',
+  host='https://ollama.molodetz.nl/',
   headers={'x-some-header': 'some-value'}
 )
 
