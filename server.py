@@ -133,6 +133,8 @@ app = web.Application()
 app.router.add_get("/", index_handler)
 app.router.add_route('GET', '/publish', websocket_handler)
 app.router.add_route('POST', '/api/chat', http_handler)
+app.router.add_route('POST', '/v1/api/chat', http_handler)
+app.router.add_route('POST', '/v1/api/chat/completions', http_handler)
 app.router.add_route('GET', '/models', models_handler)
 
 if __name__ == '__main__':
