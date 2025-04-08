@@ -51,11 +51,10 @@ async def websocket_client(url: str, ollama_url: str) -> None:
 async def main(concurrency: int, ollama_url: str) -> None:
     url = 'https://ollama.molodetz.nl'
 
-    tasks = []
-    for _ in range(concurrency):
-        tasks.append(websocket_client(url, ollama_url))
-
     while True:
+        tasks = []
+        for _ in range(concurrency):
+            tasks.append(websocket_client(url, ollama_url))
         try:
             await asyncio.gather(*tasks)
         except Exception as e:
