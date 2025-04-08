@@ -113,9 +113,9 @@ async def http_handler(request):
     import json
     try:
         async for result in server_manager.forward_to_websocket(request_id, data, path=request.path):
-            await resp.write(json.dumps(result).encode())
+            await resp.write(json.dumps(result).encode()+b'\r\n')
     except NoServerFoundException:
-        await resp.write(json.dumps(dict(error="No server with that model found.",available=server_manager.get_models())).encode() + b'\n')
+        await resp.write(json.dumps(dict(error="No server with that model found.",available=server_manager.get_models())).encode() + b'\r\n')
     await resp.write_eof()
     return resp
 
