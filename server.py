@@ -26,7 +26,7 @@ class OllamaServer:
         while True:
             chunk = await self.queues[request_id].get()
             yield chunk
-            if chunk['done']:
+            if chunk.get('done'):
                 break
 
     async def serve(self):
@@ -125,6 +125,10 @@ async def index_handler(request):
     index_template = index_template.replace("#client.py", client_py)
     return web.Response(text=index_template, content_type="text/html")
 
+async def not_found_handler(request):
+    print("not found:",request.path)
+    return web.json_response({"error":"not found"})
+
 async def models_handler(self):
     return web.json_response(server_manager.get_models())
 
@@ -133,9 +137,11 @@ app = web.Application()
 app.router.add_get("/", index_handler)
 app.router.add_route('GET', '/publish', websocket_handler)
 app.router.add_route('POST', '/api/chat', http_handler)
-app.router.add_route('POST', '/v1/api/chat', http_handler)
-app.router.add_route('POST', '/v1/api/chat/completions', http_handler)
+app.router.add_route('POST', '/v1/chat', http_handler)
+app.router.add_route('POST', '/v1/completions', http_handler)
+app.router.add_route('POST', '/v1/chat/completions', http_handler)
 app.router.add_route('GET', '/models', models_handler)
+app.router.add_route('*', '/{tail:.*}', not_found_handler)
 
 if __name__ == '__main__':
     web.run_app(app, port=1984)
