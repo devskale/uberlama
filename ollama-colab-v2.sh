@@ -1,7 +1,7 @@
 # Free GPU's for everyone! Run Ollama on Google Colab by running only this script by running the curl a few lines below. 
 
 # Execute this script by running the following command in Jupyther Notebook (Google Collab):
-# !curl https://molodetz.nl/retoor/uberlama/raw/branch/main/ollama-colab-v2.sh | bash
+# !curl -fsSL https://molodetz.nl/retoor/uberlama/raw/branch/main/ollama-colab-v2.sh | sh
 
 # Install Ollama.
 curl -fsSL https://ollama.com/install.sh | sh
