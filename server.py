@@ -17,16 +17,22 @@ class OllamaServer:
     async def forward_to_http(self, request_id, message):
         if request_id not in self.queues:
             self.queues[request_id] = asyncio.Queue()
+        print(message)
         await self.queues[request_id].put(message)
 
     async def forward_to_websocket(self, request_id, message, path):
         self.queues[request_id] = asyncio.Queue()
+        print(path,request_id,message)
         await self.ws.send_json(dict(request_id=request_id, data=message, path=path))
 
         while True:
             chunk = await self.queues[request_id].get()
             yield chunk
-            if chunk.get('done'):
+
+            if not 'done' in chunk:
+                break
+
+            if chunk['done']:
                 break
 
     async def serve(self):
