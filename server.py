@@ -80,9 +80,14 @@ class ServerManager:
         for server in self.servers:
             for model_name in server.model_names:
                 if not model_name in models:
-                    models[model_name] = 0
-                models[model_name] += 1
-        return models
+                    models[model_name] = {}
+                    models[model_name]['id'] = model_name
+                    models[model_name]['instances'] = 0
+                    models[model_name]['owner'] = 'public'
+                    models[model_name]['object'] = 'model'
+                    models[model_name]['created'] = 0
+                models[model_name]['instances'] += 1
+        return list(models.values())
 
 
 server_manager = ServerManager()
@@ -147,6 +152,7 @@ app.router.add_route('POST', '/v1/chat', http_handler)
 app.router.add_route('POST', '/v1/completions', http_handler)
 app.router.add_route('POST', '/v1/chat/completions', http_handler)
 app.router.add_route('GET', '/models', models_handler)
+app.router.add_route('GET', '/v1/models', models_handler)
 app.router.add_route('*', '/{tail:.*}', not_found_handler)
 
 if __name__ == '__main__':
