@@ -29,15 +29,23 @@ async def websocket_client(url: str, ollama_url: str) -> None:
                         api_url = urlunparse(urlparse(ollama_url)._replace(path=data['path']))
 
                         async with session.post(api_url, json=data['data']) as response:
+                            print(response)
                             if response.status != 200:
                                 logging.error(f"Failed to post data: {response.status}")
                                 continue
+                            
                             logging.info(f"Streaming response.")
                             async for msg in response.content:
-                                msg = json.loads(msg.decode('utf-8'))
+                                #first_index = msg.find(b"{")
+                                #msg = msg[first_index:]
+                                #last_index = msg.rfind(b"}")
+                                #msg = msg[:last_index+1]
+                                #if not msg:
+                                #    continue
+                                #msg = json.loads(msg.decode('utf-8'))
                                 await ws.send_json(dict(
                                     request_id=request_id,
-                                    data=msg
+                                    data=msg.decode()
                                 ))
                             logging.info(f"Response complete.")
                     elif msg.type == aiohttp.WSMsgType.ERROR:
