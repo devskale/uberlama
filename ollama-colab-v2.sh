@@ -6,11 +6,14 @@
 # Install Ollama.
 curl -fsSL https://ollama.com/install.sh | sh
 
-# Your model.
-ollama pull qwen2.5-coder:14b
-
 # Start Ollama on the background.
 nohup ollama serve > ollama.log 2>&1 &
+
+# Wait a second.
+sleep 2
+
+# Your model.
+ollama pull qwen2.5-coder:14b
 
 # Install the ollama molodetz client to publish your model to uberlama.
 pip install aiohttp
