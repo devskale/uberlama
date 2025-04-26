@@ -14,35 +14,29 @@ async def websocket_client(url: str, ollama_url: str) -> None:
     async with aiohttp.ClientSession() as session:
         try:
             async with session.ws_connect(f'{url}/publish') as ws:
+                logging.info("Fetching models.")
                 async with session.get(f'{ollama_url}/api/tags') as response:
                     if response.status != 200:
                         logging.error(f"Failed to fetch models: {response.status}")
                         return
                     models = await response.json()
                     await ws.send_json(models)
-
+                logging.info("Published models to uberlama.")
                 async for msg in ws:
                     if msg.type == aiohttp.WSMsgType.TEXT:
                         data = msg.json()
-                        logging.info(f"Received data: {data}")
+                        logging.info(f"Received data: {data}.")
                         request_id = data['request_id']
                         api_url = urlunparse(urlparse(ollama_url)._replace(path=data['path']))
 
                         async with session.post(api_url, json=data['data']) as response:
-                            print(response)
                             if response.status != 200:
-                                logging.error(f"Failed to post data: {response.status}")
+                                logging.error(f"Failed to post data: {response.status}.")
                                 continue
                             
                             logging.info(f"Streaming response.")
                             async for msg in response.content:
-                                #first_index = msg.find(b"{")
-                                #msg = msg[first_index:]
-                                #last_index = msg.rfind(b"}")
-                                #msg = msg[:last_index+1]
-                                #if not msg:
-                                #    continue
-                                #msg = json.loads(msg.decode('utf-8'))
+                                print(msg.decode())
                                 await ws.send_json(dict(
                                     request_id=request_id,
                                     data=msg.decode()

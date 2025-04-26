@@ -31,18 +31,37 @@ class OllamaServer:
             if chunk:
                 yield chunk
             if not chunk:
-                yield '\n'
+                yield ''
+                #yield '\n'
             print("CHUNK:", chunk)
+            try:
+                obj = json.loads(chunk)
+                if obj.get('done'):
+                    break
+            except:
+                pass
+
+            try:
+                if '"finish_reason":"stop"' in chunk:
+                    break
+            except:
+                pass 
+
+            try:
+                if 'data: [DONE]' in chunk:
+                    break
+            except:
+                pass
             #try:
                 #yield json.loads(chunk)
             #except:
             #    yield chunk
-            if not 'done' in chunk:
-                break
-            if 'stop' in chunk:
-                break
-            if chunk['done']:
-                break
+            #if not 'done' in chunk:
+            #    break
+            #if 'stop' in chunk:
+            #    break
+            #if chunk.get('done'):
+            #    break
             
 
     async def serve(self):
@@ -145,10 +164,10 @@ async def http_handler(request):
     except ValueError:
         return web.Response(status=400)
     # application/x-ndjson text/event-stream
-    if data['stream']:
+    if data.get('stream'):
         resp = web.StreamResponse(headers={'Content-Type': 'text/event-stream', 'Transfer-Encoding': 'chunked'})
     else:
-        resp = web.StreamResponse(headers={'Content-Type': 'application/json', 'Transfer-Encoding': 'chunked'})
+        resp = web.StreamResponse(headers={'Content-Type': 'application/json', 'Transfer-Encoding':'chunked'})
     await resp.prepare(request)
     import json
     try:
