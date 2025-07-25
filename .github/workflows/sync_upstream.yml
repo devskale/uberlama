@@ -1,4 +1,4 @@
-#https://retoor.molodetz.nl/hanwoo/uberlama.git
+#https://retoor.molodetz.nl/retoor/uberlama.git
 name: Sync Upstream Repository
 
 on:
@@ -26,7 +26,7 @@ jobs:
       # Example using SourceHut:
       - name: Add Upstream Remote (SourceHut)
         run: |
-          git remote add upstream https://retoor.molodetz.nl/hanwoo/uberlama.git
+          git remote add upstream https://retoor.molodetz.nl/retoor/uberlama.git
           git fetch upstream --tags
 
       # Example using Codeberg (Comment out the SourceHut step if using this):
