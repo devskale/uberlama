@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Documentation</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; }
+        h1, h2, h3 { color: #333; }
+        pre { background: #f4f4f4; padding: 10px; border-left: 3px solid #ccc; }
+    </style>
+</head>
+<body>
+    <h1>Project Documentation</h1>
+
+    <h2>Overview</h2>
+    <p>This project implements a WebSocket client and server for the Ollama API, allowing users to communicate with an Ollama server. The server is designed to handle multiple concurrent connections and stream responses back to clients.</p>
+
+    <h2>File Structure</h2>
+    <ul>
+        <li><strong>client.py</strong>: The WebSocket client that connects to the Ollama API and handles message sending and receiving.</li>
+        <li><strong>index.html</strong>: The HTML interface for the Ollama Crowd-Funded Server, providing instructions and usage examples.</li>
+        <li><strong>Makefile</strong>: A build script for setting up the project environment, running the server, and executing tests.</li>
+        <li><strong>prompt.txt</strong>: Contains instructions for maintaining code consistency and logging practices.</li>
+        <li><strong>requirements.txt</strong>: Lists the Python dependencies required for the project.</li>
+        <li><strong>server.py</strong>: The WebSocket server that manages connections and forwards messages between clients and the Ollama API.</li>
+        <li><strong>test.py</strong>: Contains tests for the functionality of the client and server.</li>
+    </ul>
+
+    <h2>Client Implementation (<code>client.py</code>)</h2>
+    <p>The client connects to the Ollama API via WebSocket and handles incoming messages. It supports concurrent connections and logs important events.</p>
+
+    <h3>Key Functions</h3>
+    <ul>
+        <li><code>websocket_client(url: str, ollama_url: str)</code>: Connects to the WebSocket server and handles message exchange.</li>
+        <li><code>main(concurrency: int, ollama_url: str)</code>: Initializes multiple WebSocket connections based on the specified concurrency level.</li>
+        <li><code>validate_url(url: str)</code>: Validates the provided URL format.</li>
+    </ul>
+
+    <h2>Server Implementation (<code>server.py</code>)</h2>
+    <p>The server listens for incoming WebSocket connections and manages message forwarding to and from the Ollama API.</p>
+
+    <h3>Key Classes</h3>
+    <ul>
+        <li><code>OllamaServer</code>: Manages individual WebSocket connections and message queues.</li>
+        <li><code>ServerManager</code>: Manages multiple <code>OllamaServer</code> instances and forwards messages between them.</li>
+    </ul>
+
+    <h3>Key Functions</h3>
+    <ul>
+        <li><code>websocket_handler(request)</code>: Handles incoming WebSocket connections and initializes <code>OllamaServer</code>.</li>
+        <li><code>http_handler(request)</code>: Handles HTTP requests and forwards them to the appropriate WebSocket server.</li>
+    </ul>
+
+    <h2>HTML Interface (<code>index.html</code>)</h2>
+    <p>The HTML file provides a user-friendly interface for interacting with the Ollama server. It includes instructions for using the server and a code snippet for the client.</p>
+
+    <h2>Build and Run Instructions (<code>Makefile</code>)</h2>
+    <p>To set up the project, run the following commands:</p>
+    <ol>
+        <li>Install dependencies:
+            <pre>make install</pre>
+        </li>
+        <li>Start the server:
+            <pre>make server</pre>
+        </li>
+        <li>Run the client:
+            <pre>make client</pre>
+        </li>
+        <li>Execute tests:
+            <pre>make test</pre>
+        </li>
+    </ol>
+
+    <h2>Dependencies (<code>requirements.txt</code>)</h2>
+    <p>The project requires the following Python packages:</p>
+    <ul>
+        <li><code>aiohttp</code>: For asynchronous HTTP and WebSocket handling.</li>
+    </ul>
+
+    <h2>Testing (<code>test.py</code>)</h2>
+    <p>The test file contains unit tests to ensure the functionality of the client and server components.</p>
+
+    <h2>Contribution</h2>
+    <p>Contributions to improve the project are welcome. Please follow the standard practices for submitting issues and pull requests.</p>
+
+    <h2>License</h2>
+    <p>This project is licensed under the MIT License.</p>
+</body>
+</html>
